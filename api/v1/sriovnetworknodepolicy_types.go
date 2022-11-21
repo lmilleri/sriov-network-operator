@@ -54,6 +54,9 @@ type SriovNetworkNodePolicySpec struct {
 	// +kubebuilder:validation:Enum=legacy;switchdev
 	// NIC Device Mode. Allowed value "legacy","switchdev".
 	EswitchMode string `json:"eSwitchMode,omitempty"`
+	// +kubebuilder:validation:Enum=virtio;vhost
+	// VDPA device type. Allowed value "virtio","vhost".
+	VdpaType string `json:"vdpaType,omitempty"`
 }
 
 type SriovNetworkNicSelector struct {
