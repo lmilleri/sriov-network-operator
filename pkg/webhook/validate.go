@@ -150,11 +150,18 @@ func staticValidateSriovNetworkNodePolicy(cr *sriovnetworkv1.SriovNetworkNodePol
 	// To configure RoCE on baremetal or virtual machine:
 	// BM: DeviceType = netdevice && isRdma = true
 	// VM: DeviceType = vfio-pci && isRdma = false
-	if cr.Spec.DeviceType == "vfio-pci" && cr.Spec.IsRdma {
+	if cr.Spec.DeviceType == constants.DeviceTypeVfioPci && cr.Spec.IsRdma {
 		return false, fmt.Errorf("'deviceType: vfio-pci' conflicts with 'isRdma: true'; Set 'deviceType' to (string)'netdevice' Or Set 'isRdma' to (bool)'false'")
 	}
 	if strings.EqualFold(cr.Spec.LinkType, constants.LinkTypeIB) && !cr.Spec.IsRdma {
 		return false, fmt.Errorf("'linkType: ib or IB' requires 'isRdma: true'; Set 'isRdma' to (bool)'true'")
+	}
+	// vdpa specific validation
+	if cr.Spec.VdpaType == constants.VdpaTypeVHost {
+		return false, fmt.Errorf("'vdpaType: vhost' is not supported yet")
+	}
+	if cr.Spec.DeviceType == constants.DeviceTypeVfioPci && cr.Spec.VdpaType == constants.VdpaTypeVirtio {
+		return false, fmt.Errorf("'deviceType: vfio-pci' conflicts with 'vdpaType: virtio'; Set 'deviceType' to (string)'netdevice' Or Remove 'vdpaType'")
 	}
 	return true, nil
 }
