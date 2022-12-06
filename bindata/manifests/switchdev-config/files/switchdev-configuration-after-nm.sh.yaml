@@ -58,7 +58,9 @@ contents:
             extract_min_max_ids
             vdpaType=$(jq -c '.vdpaType' -r <<< $group)
             if [ $vfid -le $maxId ] && [ $vfid -ge $minId ] && [ $vdpaType == "virtio" ]; then
-              vdpa_cmd="vdpa dev add name vdpa:"${VfPciAddr}" mgmtdev pci/"${VfPciAddr}
+              mac_suffix=`printf "%02x\n" ${vfid}`
+              mac=00:11:22:33:44:${mac_suffix}
+              vdpa_cmd="vdpa dev add name vdpa:${VfPciAddr} mgmtdev pci/${VfPciAddr} mac ${mac}"
               eval $vdpa_cmd
             fi
           done
